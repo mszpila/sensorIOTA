@@ -177,6 +177,20 @@ void init_iota_get_transactions(){
 get_transactions_to_approve_res_t getTransactionsReceive;
 
 void app_main() {
+    initialize_nvs();
+    ESP_LOGI(TAG, "iota wallet system starting...");
+
+    // checking default seed
+    if (strlen(CONFIG_IOTA_SEED) != HASH_LENGTH_TRYTE) {
+        ESP_LOGE(TAG, "please set a valid seed in sdkconfig!");
+        for (int i = 30; i >= 0; i--) {
+            ESP_LOGI(TAG, "Restarting in %d seconds...", i);
+            vTaskDelay(1000 / portTICK_PERIOD_MS);
+            }
+        ESP_LOGI(TAG, "Restarting now.\n");
+        fflush(stdout);
+        esp_restart();
+    }
 
     // init wifi
     wifi_conn_init();
@@ -209,7 +223,12 @@ void app_main() {
         //hash8019_queue_t trytes = NULL;
         //json_get_trytes_deserialize_response(sensor, trytes);
 
+        printf(sensor);
+        
+
         cJSON_Delete(sensor);
+
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
 
     }
 
